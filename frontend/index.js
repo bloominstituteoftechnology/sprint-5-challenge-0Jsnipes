@@ -21,8 +21,7 @@ const fetchMentors = async () => {
     const mentorCard = await axios.get(mentorsURL);
     const mentorData = mentorCard.data;
     return mentorData;
-  } 
-  catch (error) {
+  } catch (error) {
     console.error('Error fetching mentor data:', error);
     return [];
   }
@@ -30,12 +29,22 @@ const fetchMentors = async () => {
 
 const createLearnerCards = async () => {
   try {
-    const learnerData = await fetchLearners();
+    const mentorData = await fetchMentors();
+
+    const mentorMapFirst = new Map();
+    const mentorMapLast = new Map();
     
+    mentorData.forEach(mentor => {
+      mentorMapFirst.set(mentor.id, mentor.firstName);
+      mentorMapLast.set(mentor.id, mentor.lastName);
+    });
+
+    const learnerData = await fetchLearners();
+    const cardsContainer = document.querySelector('.cards');
+
     learnerData.forEach(element => {
       const card = document.createElement('div');
       card.classList.add('card');
-      const cardsContainer = document.querySelector('.cards');
 
       const nCard = element.email;
       const lCard = element.fullName;
@@ -45,25 +54,45 @@ const createLearnerCards = async () => {
       const h3 = document.createElement('h3');
       const div = document.createElement('div');
       const h4 = document.createElement('h4');
+      const ul = document.createElement('ul');
 
-      h3.textContent = `${lCard}, ${iCard}`;
-      div.textContent = `Email: ${nCard}`;
-      h4.textContent = `Mentors: ${mCard}`;
+      h3.textContent = `${lCard}, ID ${iCard}`;
+      div.textContent = `${nCard}`;
+      h4.textContent = `Mentors`;
       h4.classList.add('closed');
+
+      mCard.forEach(id => {
+        const mentorFirstName = mentorMapFirst.get(id);
+        const mentorLastName = mentorMapLast.get(id);
+        const li = document.createElement('li');
+        li.textContent = `${mentorFirstName} ${mentorLastName}`;
+        ul.appendChild(li);
+      });
 
       card.appendChild(h3);
       card.appendChild(div);
       card.appendChild(h4);
+      card.appendChild(ul);
 
       cardsContainer.appendChild(card);
+
+      card.addEventListener('click', evt => {
+        card.classList.toggle('selected')
+      document.querySelector('.info').textContent = `The selected learner is ${lCard}` }
+      
+      )
+      
     });
+
   } catch (error) {
     console.error('Error creating learner cards:', error);
   }
+
 };
 
-
 createLearnerCards();
+
+
 
 const footer = document.querySelector('footer');
 const currentYear = new Date().getFullYear();
