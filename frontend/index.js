@@ -9,6 +9,7 @@ const fetchLearners = async () => {
   try {
     const learnerCard = await axios.get(learnersURL);
     const learnerData = learnerCard.data;
+    document.querySelector('.info').textContent = 'No learner is selected';
     return learnerData;
   } catch (error) {
     console.error('Error fetching learner data:', error);
@@ -92,7 +93,7 @@ const createLearnerCards = async () => {
 
         } else {
             card.querySelector('h3').textContent = `${lCard}`
-            document.querySelector('.info').textContent = 'No learner selected';
+            document.querySelector('.info').textContent = 'No learner is selected';
             card.classList.remove('selected')
         }
       document.querySelectorAll('.card').forEach(otherCard => {
@@ -107,8 +108,10 @@ const createLearnerCards = async () => {
     h4.addEventListener('click', evt => {
       h4.classList.toggle('closed')
       h4.classList.toggle('open')
-      evt.stopPropagation();
-    })
+      if (card.classList.contains('selected')){
+        evt.stopPropagation();
+      }
+      })
 
     })
 
