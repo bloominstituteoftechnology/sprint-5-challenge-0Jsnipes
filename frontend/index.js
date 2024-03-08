@@ -56,7 +56,7 @@ const createLearnerCards = async () => {
       const h4 = document.createElement('h4');
       const ul = document.createElement('ul');
 
-      h3.textContent = `${lCard}, ID ${iCard}`;
+      h3.textContent = `${lCard}`;
       div.textContent = `${nCard}`;
       h4.textContent = `Mentors`;
       h4.classList.add('closed');
@@ -75,14 +75,43 @@ const createLearnerCards = async () => {
       card.appendChild(ul);
 
       cardsContainer.appendChild(card);
-
+      
+      
       card.addEventListener('click', evt => {
-        card.classList.toggle('selected')
-      document.querySelector('.info').textContent = `The selected learner is ${lCard}` }
+        const isAlreadySelected = card.classList.contains('selected');
+    
+        const allCards = document.querySelectorAll('.card');
+        allCards.forEach(card => card.classList.remove('selected'));
+    
+       
+        card.classList.toggle('selected');
+    
+        if (!isAlreadySelected) {
+            card.querySelector('h3').textContent = `${lCard}, ID ${iCard}`
+            document.querySelector('.info').textContent = `The selected learner is ${lCard}`;
+
+        } else {
+            card.querySelector('h3').textContent = `${lCard}`
+            document.querySelector('.info').textContent = 'No learner selected';
+            card.classList.remove('selected')
+        }
+      document.querySelectorAll('.card').forEach(otherCard => {
+        otherCard.addEventListener('click',evt => {
+          if (otherCard !==card) {
+            card.querySelector('h3').textContent = `${lCard}`
+          }
+        })
+      })
       
-      )
-      
-    });
+    })
+    h4.addEventListener('click', evt => {
+      h4.classList.toggle('closed')
+      h4.classList.toggle('open')
+      evt.stopPropagation();
+    })
+
+    })
+
 
   } catch (error) {
     console.error('Error creating learner cards:', error);
